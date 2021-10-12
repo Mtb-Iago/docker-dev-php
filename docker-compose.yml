@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+    php-apache-environment:
+        container_name: php-apache-on
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        depends_on:
+            - dbon
+        volumes:
+            - ./:/var/www/html/
+        ports:
+            - 8000:80
+    dbon:
+        container_name: dbon
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+            MYSQL_DATABASE: MYSQL_DATABASE
+            MYSQL_USER: MYSQL_USER
+            MYSQL_PASSWORD: MYSQL_PASSWORD
+        ports:
+            - "9906:3306"
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - '8080:80'
+        restart: always
+        environment:
+            PMA_HOST: dbon
+        depends_on:
+            - dbon
