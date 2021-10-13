@@ -6,28 +6,28 @@ services:
             context: ./
             dockerfile: Dockerfile
         depends_on:
-            - dbon
+            - db
         volumes:
             - ./:/var/www/html/
         ports:
             - 8000:80
-    dbon:
-        container_name: dbon
+    
+    db:
         image: mysql
+        command: --default-authentication-plugin=mysql_native_password
         restart: always
         environment:
-            MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
-            MYSQL_DATABASE: MYSQL_DATABASE
-            MYSQL_USER: MYSQL_USER
-            MYSQL_PASSWORD: MYSQL_PASSWORD
+            MYSQL_ROOT_PASSWORD: root
         ports:
-            - "9906:3306"
+            - "3306:3306"
+
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
-        ports:
-            - '8080:80'
-        restart: always
-        environment:
-            PMA_HOST: dbon
         depends_on:
-            - dbon
+            - db
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "8080:80"
+        volumes:
+            - ./uploads.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
